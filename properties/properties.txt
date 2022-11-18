@@ -1,0 +1,3 @@
+path: jdbc:mysql://localhost:3306/mydatabase1
+user: manvin1
+pwd: Password1

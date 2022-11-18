@@ -1,0 +1,54 @@
+CREATE TABLE IF NOT EXISTS Pessoa
+(
+	Login VARCHAR(20) PRIMARY KEY,
+    Senha VARCHAR(20) NOT NULL,
+    Email VARCHAR(20) UNIQUE,
+    Telefone VARCHAR(11) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Projeto
+(
+	Id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    Titulo VARCHAR(20) NOT NULL,
+    Descricao TEXT,
+    Cidade VARCHAR(20),
+    Estado VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS Categoria
+(
+	Id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS Publicacao
+(
+	Login VARCHAR(20),
+    IdProjeto BIGINT,
+    PRIMARY KEY (Login, IdProjeto),
+    FOREIGN KEY (Login)
+		REFERENCES Pessoa (Login)
+			ON UPDATE NO ACTION
+            ON DELETE NO ACTION,
+    FOREIGN KEY (IdProjeto)
+		REFERENCES Projeto (Id)
+			ON UPDATE NO ACTION
+            ON DELETE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS ProjetoCategoria
+(
+    IdProjeto BIGINT,
+    IdCat BIGINT,
+    PRIMARY KEY (IdProjeto, IdCat),
+    FOREIGN KEY (IdProjeto)
+		REFERENCES Projeto (Id)
+			ON UPDATE NO ACTION
+            ON DELETE NO ACTION,
+    FOREIGN KEY (IdCat)
+		REFERENCES Categoria (Id)
+			ON UPDATE NO ACTION
+            ON DELETE NO ACTION
+);
+
+
