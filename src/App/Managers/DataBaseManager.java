@@ -119,13 +119,87 @@ public class DataBaseManager {
                             connection.commit();
                             return Optional.of(projeto);
                         }
+                        else
+                        {
+                            System.out.println("insertProject: Não foi possível inserir as categorias");
+                        }
                     }
+                    else 
+                    {
+                        System.out.println("insertProject: Não foi possível inserir os publicadores");
+                    }
+                }
+                else
+                {
+                    System.out.println("insertProject: Não foi possível inserir o projeto");
                 }
                 connection.rollback();
             } catch (SQLException e) // possivelmente leva à bugs se lançar exception, pois não é possível realizar o
                                      // rollback?
             {
                 System.out.println("Ocorreu um erro no registro de projetos.");
+                e.printStackTrace();
+            }
+        }
+        return Optional.empty();
+    }
+
+    public boolean deleteProject(int id) {
+        Optional<Connection>  ctionOpt  = ConnectionManager.getConnection();
+        if (ctionOpt.isPresent()) {
+            try (Connection connection = ctionOpt.get()) {
+                
+                PreparedStatement stmt = connection.prepareStatement(SQLStatements.stmt_deleteProj);
+                stmt.setInt(1, id);
+
+                int result = stmt.executeUpdate();
+                if (result != 0)
+                {
+                    stmt.close();
+                    return true;
+                }
+                else {
+                    stmt.close();
+                    return false;
+                }
+                
+            } catch (SQLException e) {
+                System.out.println("Ocorreu um erro na query da database.");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("DataBaseManager: Não foi possível estabeler conexão para query na database.");
+        }
+        return false;
+    }
+
+    
+    public Optional<Projeto> updateProject(Projeto projeto) {
+        Optional<Connection>  ctionOpt  = ConnectionManager.getConnection();
+        if (ctionOpt.isPresent()) 
+        {
+            try (Connection connection = ctionOpt.get()) {
+                
+                PreparedStatement stmt = connection.prepareStatement(SQLStatements.stmt_updateProj);
+                stmt.setString(1, projeto.titulo);
+                stmt.setString(2, projeto.resumo);
+                stmt.setString(3, projeto.dption);
+                stmt.setString(4, projeto.cidade);
+                stmt.setString(5, projeto.estado);
+                stmt.setInt(6, projeto.id);
+
+                int result = stmt.executeUpdate();
+                if (result != 0)
+                {
+                    stmt.close();
+                    return Optional.of(projeto);
+                }
+                else {
+                    stmt.close();
+                    return Optional.empty();
+                }
+                
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -501,8 +575,9 @@ public class DataBaseManager {
             if (result != 0) {
                 ResultSet resultSet = stmt.getGeneratedKeys();
                 if (resultSet.next()) {
+                    int ret = resultSet.getInt(1);
                     stmt.close();
-                    return Optional.of(resultSet.getInt(1));
+                    return Optional.of(ret);
                 } else {
                     stmt.close();
                     System.out.println("insertProject: Não foi gerada uma Key para um evento");

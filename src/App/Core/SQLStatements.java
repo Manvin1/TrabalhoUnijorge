@@ -42,7 +42,7 @@ public class SQLStatements {
             +    "FOREIGN KEY (IdProjeto)"
             +        " REFERENCES Projeto (Id)"
             +            " ON UPDATE NO ACTION"
-            +            " ON DELETE NO ACTION"
+            +            " ON DELETE CASCADE"
             +");";
 
     static public final String stmtProjCat =
@@ -54,7 +54,7 @@ public class SQLStatements {
         +    "FOREIGN KEY (IdProjeto)"
         +        " REFERENCES Projeto (Id)"
         +            " ON UPDATE NO ACTION"
-        +            " ON DELETE NO ACTION,"
+        +            " ON DELETE CASCADE,"
         +    "FOREIGN KEY (IdCat)"
         +        " REFERENCES Categoria (Id)"
         +            " ON UPDATE NO ACTION"
@@ -68,6 +68,10 @@ public class SQLStatements {
     static public final String stmt_insertPubli = "INSERT INTO Autores (IdProjeto, Nome) VALUES (?, ?);";
     static public final String stmt_insertProjCateg = "INSERT INTO ProjetoCategoria (IdProjeto, IdCat) VALUES (?, ?);";
     static public final String stmt_insertCategory = "INSERT INTO Categoria (Nome) VALUES (?);";
+
+    static public final String stmt_deleteProj = "DELETE FROM Projeto WHERE Id = ?;";
+    
+    static public final String stmt_updateProj = "UPDATE Projeto SET Titulo = ?, Resumo = ?, Descricao = ?, Cidade = ?, Estado = ? WHERE Id = ?;";
 
     static public final String stmt_projectCount =  "SELECT COUNT(Id) FROM Projeto;";
     static public final String stmt_userCount =  "SELECT COUNT(Login) FROM Pessoa;";

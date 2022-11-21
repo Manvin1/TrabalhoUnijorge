@@ -1,5 +1,8 @@
 package App.Core;
 
+/**
+ *  < Inspirido no Authenticate do Spring.
+ */
 public class Authenticate {
     public String login;
     public String pwd;

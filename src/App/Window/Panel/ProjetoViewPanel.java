@@ -38,7 +38,7 @@ public class ProjetoViewPanel extends TransitionablePanel {
         Optional<Projeto> projOpt = DataBaseManager.get().getProject(id);
         if (projOpt.isPresent())
         {
-                Projeto proj = projOpt.get();
+                proj = projOpt.get();
                 titulo_field.setText(proj.titulo);
                 autor_field.setText(proj.nomeList.toString());
                 resumo_area.setText(proj.resumo);
@@ -46,8 +46,15 @@ public class ProjetoViewPanel extends TransitionablePanel {
                 estado_field.setText(proj.estado);
                 dpction_area.setText(proj.dption);
                 cat_field.setText(proj.categoriaList.toString());
+
+                if (pessoa.login.equals(proj.pubLogin))
+                {
+                        this.add(delete_button);
+                        this.add(update_button);
+                }
         }
 
+        autor_field.setEditable(false);
 
         this.add(titulo_label);
         this.add(titulo_field);
@@ -155,10 +162,22 @@ public class ProjetoViewPanel extends TransitionablePanel {
         // cat_cbox.setPreferredSize(cat_cbox.getSize());
 
         // button
-        layout_manager.putConstraint(SpringLayout.WEST, return_button, 0,
-                SpringLayout.WEST, cat_label); // return_button
-        layout_manager.putConstraint(SpringLayout.NORTH, return_button, 10,
+
+        layout_manager.putConstraint(SpringLayout.EAST, update_button, 0,
+                SpringLayout.EAST, cat_field); // update button
+        layout_manager.putConstraint(SpringLayout.NORTH, update_button, 10,
                 SpringLayout.SOUTH, cat_field);
+
+                
+        layout_manager.putConstraint(SpringLayout.EAST, delete_button, 0,
+        SpringLayout.EAST, cat_field); // delete button
+        layout_manager.putConstraint(SpringLayout.NORTH, delete_button, 10,
+        SpringLayout.SOUTH, update_button);
+
+        layout_manager.putConstraint(SpringLayout.WEST, return_button, 0,
+        SpringLayout.WEST, cat_label); // return_button
+layout_manager.putConstraint(SpringLayout.NORTH, return_button, 10,
+        SpringLayout.SOUTH, update_button);
 
 
     }
@@ -171,6 +190,41 @@ public class ProjetoViewPanel extends TransitionablePanel {
                                 new ProjetoListPanel(bounds, observer, pessoa)));
                     }
                 });
+
+                delete_button.addActionListener(
+                        new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                if (proj != null)
+                                {
+                                        if (DataBaseManager.get().deleteProject(proj.id))
+                                        notifyEvent(new TransitionEvent(
+                                                new ProjetoListPanel(bounds, observer, pessoa)));
+                                }
+                            }
+                        });
+
+                        update_button.addActionListener(
+                                new ActionListener() {
+                                    public void actionPerformed(ActionEvent e) {
+                                        proj.titulo = titulo_field.getText();
+                                        proj.resumo = resumo_area.getText();
+                                        proj.cidade = cidade_field.getText();
+                                        proj.estado = estado_field.getText();
+                                        proj.dption = dpction_area.getText();
+                                        
+                                        Optional<Projeto>  opt = DataBaseManager.get().updateProject(proj);
+                
+                                          if (opt.isPresent()) {
+                                            System.out.println("ProjCadastroPanel: Projeto Atualizado.");
+                                          notifyEvent(new TransitionEvent(new ProjetoViewPanel(bounds, observer, pessoa, proj.id)));
+                                          }
+                                          else
+                                          {
+                                            System.out.println("ProjCadastroPanel: Não foi possivel atualizar o projeto.");
+                                         }
+                                         
+                                    }
+                                });
     }
 
     @Override
@@ -190,6 +244,7 @@ public class ProjetoViewPanel extends TransitionablePanel {
     private Dimension bounds;
     private Pessoa pessoa;
     ArrayList<String> nomeList = new ArrayList<String>();
+    Projeto proj = null;
 
     // Labels
     private JLabel titulo_label = new JLabel("Título");
@@ -213,5 +268,6 @@ public class ProjetoViewPanel extends TransitionablePanel {
 
     // Buttons
     private JButton return_button = new JButton("Retornar");
-
+    private JButton delete_button = new JButton("Excluir");
+    private JButton update_button = new JButton("Atualizar");
 }
