@@ -1,6 +1,6 @@
 package App.Managers;
 
-import org.apache.commons.lang3.tuple.*;
+import App.Utils.*;
 
 import java.sql.*;
 import java.io.*;
@@ -15,15 +15,15 @@ public class ConnectionManager {
      */
     static public Optional<Connection> getConnection() 
     {
-       Optional<ImmutableTriple<String, String, String>> propOpt = getProperties("properties/properties.txt");
+       Optional<Triple<String, String, String>> propOpt = getProperties("properties/properties.txt");
         if (!propOpt.isPresent()) 
         {
             return Optional.empty();
         }
 
         try {
-            ImmutableTriple<String, String, String> prop = propOpt.get();
-            return Optional.of(DriverManager.getConnection(prop.left, prop.middle, prop.right));
+            Triple<String, String, String> prop = propOpt.get();
+            return Optional.of(DriverManager.getConnection(prop.first, prop.second, prop.third));
         } catch (Exception exp) {
             
             System.out.println("getConnection: Não foi possível obter uma conexão >>" + exp.getMessage());
@@ -37,7 +37,7 @@ public class ConnectionManager {
      * @param path
      * @return Uma tripla que é composta da url, do login e da senha lida.
      */
-    static public Optional<ImmutableTriple<String, String, String>> getProperties(final String path) 
+    static public Optional<Triple<String, String, String>> getProperties(final String path) 
     {
         Optional<FileReader> readerOp = FileManager.read(path);
 
@@ -80,7 +80,7 @@ public class ConnectionManager {
                 return Optional.empty();
             }
 
-            return Optional.of(new ImmutableTriple<String, String, String>(url, user, pwd));
+            return Optional.of(new Triple<String, String, String>(url, user, pwd));
         }
         
     }
